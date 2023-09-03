@@ -27,7 +27,7 @@ using namespace std;
 
 int startTime;
 Display *disp;
-float mem = -1, cpu = -1;
+float mem = -1, tmem=-1, umem=-1, cpu = -1;
 string distro;
 static int trapped_error_code = 0;
 string wm;
@@ -128,7 +128,7 @@ double ms_uptime(void)
     return retval;
 }
 
-float getRAM()
+float getRAM(char x)
 {
     ifstream meminfo;
     meminfo.open("/proc/meminfo");
@@ -157,7 +157,19 @@ float getRAM()
     {
         return 0;
     }
-    return (float)(total - available) / total * 100;
+    
+    if (x == 'u'){
+    	return (float) (total - available) / 1000;
+    }
+    else if (x == 't')
+    {
+    	return (float) total / 1000;
+    }
+    else
+    {
+    	return (float)(total - available) / total * 100;
+    }
+
 }
 
 void setActivity(DiscordState &state, string details, string sstate, string smallimage, string smallimagetext, string largeimage, string largeimagetext, long uptime, discord::ActivityType type)

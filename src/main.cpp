@@ -10,7 +10,7 @@ void *updateRPC(void *ptr)
     log("Waiting for usages to load...", LogType::DEBUG);
 
     // wait for usages to load
-    while (cpu == -1 || mem == -1)
+    while (cpu == -1 || mem == -1 || tmem == -1 || umem == -1)
     {
         usleep(1000);
     }
@@ -22,6 +22,8 @@ void *updateRPC(void *ptr)
     {
         string cpupercent = to_string((long)cpu);
         string rampercent = to_string((long)mem);
+        string ramusage = to_string((long)umem);
+        string ramtotal = to_string((long)tmem);
 
         usleep(config.updateSleep * 1000);
 
@@ -44,7 +46,7 @@ void *updateRPC(void *ptr)
             }
         }
 
-        setActivity(*state, string("CPU: " + cpupercent + "% | RAM: " + rampercent + "%"), "WM: " + wm, windowAsset.image, windowAsset.text, distroAsset.image, distroAsset.text, startTime, discord::ActivityType::Playing);
+        setActivity(*state, string("CPU: " + cpupercent + "% | RAM: " + ramusage + "/" + ramtotal + "MB"), "WM: " + wm, windowAsset.image, windowAsset.text, distroAsset.image, distroAsset.text, startTime, discord::ActivityType::Playing);
     }
 }
 
@@ -59,7 +61,9 @@ void *updateUsage(void *ptr)
 
     while (true)
     {
-        mem = getRAM();
+        mem = getRAM('p');
+        tmem = getRAM('t');
+        umem = getRAM('u');
         cpu = getCPU();
         sleep(config.usageSleep / 1000.0);
     }
