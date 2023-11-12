@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if ! command -v unzip &> /dev/null
-then
-    echo "unzip is required to unzip the downloaded file"
-    exit
-fi
 
 rm -rf tmp
 rm -rf lib
